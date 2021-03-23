@@ -9,30 +9,29 @@ pipeline {
       }
       stage('Docker Build') {
          steps {
-            pwsh(script: 'docker images -a')
-            pwsh(script: """
-               docker images -a
-               docker build -t jenkins-pipeline .
-               docker images -a
-            """)
+           bash """
+           docker images -a
+           docker build -t jenkins-pipeline .
+           docker images -a
+           """
          }
       }
       stage('Container Scanning') {
          parallel {
             stage('Run Anchore') {
                steps {
-                  pwsh(script: """
-                     Write-Output "blackdentech/jenkins-course" > anchore_images
+                  bash """
+                    echo "I is Ancore" 
                   """)
                   anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images'
                }
             }
             stage('Run Trivy') {
                steps {
-                  sleep(time: 30, unit: 'SECONDS')
-                  // pwsh(script: """
-                  // C:\\Windows\\System32\\wsl.exe -- sudo trivy blackdentech/jenkins-course
-                  // """)
+                 bash """
+                 docker build -t jenkins-pipeline .
+                 docker images -a
+                 """
                }
             }
          }
