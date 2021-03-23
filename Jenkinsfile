@@ -27,26 +27,6 @@ pipeline {
               } 
           }
       }
-      stage('Container Scanning') {
-         parallel {
-            stage('Run Anchore') {
-               steps {
-                  bash """
-                    echo "I is Ancore" 
-                  """)
-                  anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images'
-               }
-            }
-            stage('Run Trivy') {
-               steps {
-                 bash """
-                 docker build -t jenkins-pipeline .
-                 docker images -a
-                 """
-               }
-            }
-         }
-      }
    }
 }
 
