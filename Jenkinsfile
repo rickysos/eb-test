@@ -24,8 +24,10 @@ spec:
       mountPath: /var/run
   - name: trivy
     image: aquasec/trivy
-    securityContext:
-      privileged: true
+    command:
+    - sleep
+    args:
+    - 99d
     volumeMounts:
     - name: docker-socket
       mountPath: /var/run
