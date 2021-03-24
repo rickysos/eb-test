@@ -23,11 +23,11 @@ spec:
     - name: docker-socket
       mountPath: /var/run
   - name: trivy
-    image: aquasec/trivy
-    command:
-    - sleep
-    args:
-    - 99d
+    image: docker.io/aquasec/trivy
+    tty: true
+    command: ["/bin/sh"]
+    securityContext:
+      privileged: true
     volumeMounts:
     - name: docker-socket
       mountPath: /var/run
@@ -42,9 +42,22 @@ spec:
             sh 'docker version && docker build -t testing .'
         }
       }
-      stage ('Trivy Image') {
-        container('trivy') {
-          sh 'testing'
+      stage ('Trivy Scan') {
+        container(name: 'trivy', shell: '/bin/sh') {
+          sh '''#!/bin/sh
+             trivy testing
+             # Trivy scan result processing
+             my_exit_code=$?
+             echo "RESULT 1:--- $my_exit_code"
+
+             # Check scan results
+             if [ ${my_exit_code} == 1 ]; then
+                 echo "Image scanning failed. Some vulnerabilities found"
+                 exit 1;
+             else
+                 echo "Image is scanned Successfully. No vulnerabilities found"
+             fi;
+           '''
         } 
       }
     }
