@@ -22,6 +22,13 @@ spec:
     volumeMounts:
     - name: docker-socket
       mountPath: /var/run
+  - name: trivy
+    image: aquasec/trivy
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run
 ''') {
     node(POD_LABEL) {
       stage('Echo Things') {
@@ -32,6 +39,11 @@ spec:
         container('docker') {
             sh 'docker version && docker build -t testing .'
         }
+      }
+      stage ('Trivy Image') {
+        container('trivy') {
+          sh 'testing'
+        } 
       }
     }
 }
