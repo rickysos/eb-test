@@ -2,10 +2,11 @@ pipeline {
    environment { 
        registry = "rickysos/eb-test" 
        registryCredential = 'dockerhub_id' 
-       dockerImage = '' 
+       dockerImage = 'docker:18.09.7-dind'
+       DOCKER_TLS_CERTDIR: '' 
    }
    agent {
-      docker { image 'docker:dind' }
+      docker { image 'docker:18.09.7-dind' }
    }
    stages {
       stage('Verify Branch') {
