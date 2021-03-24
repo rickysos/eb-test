@@ -28,6 +28,7 @@ spec:
         container('docker') {
             sh 'docker version && docker build -t testing .'
         }
+      }
     }
 }
 
