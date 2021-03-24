@@ -1,32 +1,33 @@
-pipeline {
-   environment { 
-       registry = "rickysos/eb-test" 
-       registryCredential = 'dockerhub_id' 
-       dockerImage = 'docker:18.09.7-dind'
-   }
-   agent { dockerfile true }
-   stages {
-      stage('Verify Branch') {
-         steps {
-            echo "$GIT_BRANCH"
-         }
-      }
-      stage('Docker Build') {
-         steps {
-             script { 
-                 dockerImage = docker.build registry + ":$BUILD_NUMBER" 
-             }
-         }
-      }
-      stage('Deploy our image') { 
-          steps { 
-              script { 
-                  docker.withRegistry( '', registryCredential ) { 
-                      dockerImage.push() 
-                  }
-              } 
-          }
-      }
-   }
+podTemplate(yaml: '''
+apiVersion: v1
+kind: Pod
+spec:
+  volumes:
+  - name: docker-socket
+    emptyDir: {}
+  containers:
+  - name: docker
+    image: docker:19.03.1
+    command:
+    - sleep
+    args:
+    - 99d
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run
+  - name: docker-daemon
+    image: docker:19.03.1-dind
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - name: docker-socket
+      mountPath: /var/run
+''') {
+    node(POD_LABEL) {
+        writeFile file: 'Dockerfile', text: 'FROM scratch'
+        container('docker') {
+            sh 'docker version && DOCKER_BUILDKIT=1 docker build --progress plain -t testing .'
+        }
+    }
 }
 
