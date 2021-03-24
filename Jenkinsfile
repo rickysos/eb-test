@@ -25,6 +25,7 @@ spec:
 ''') {
     node(POD_LABEL) {
       stage('Echo Things') {
+        git 'https://github.com/rickysos/eb-test.git'
         sh 'ls -ltrah'
       }
       stage('Build Docker image') {
