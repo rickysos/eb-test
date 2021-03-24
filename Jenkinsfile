@@ -24,6 +24,9 @@ spec:
       mountPath: /var/run
 ''') {
     node(POD_LABEL) {
+      stage('Echo Things') {
+        sh 'ls -ltrah'
+      }
       stage('Build Docker image') {
         container('docker') {
             sh 'docker version && docker build -t testing .'
@@ -31,4 +34,3 @@ spec:
       }
     }
 }
-
