@@ -24,9 +24,9 @@ spec:
       mountPath: /var/run
 ''') {
     node(POD_LABEL) {
-        writeFile file: 'Dockerfile', text: 'FROM scratch'
+      stage('Build Docker image') {
         container('docker') {
-            sh 'docker version && DOCKER_BUILDKIT=1 docker build --progress plain -t testing .'
+            sh 'docker version && docker build -t testing .'
         }
     }
 }
