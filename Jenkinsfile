@@ -3,7 +3,9 @@ pipeline {
        registry = "rickysos/eb-test" 
        registryCredential = 'dockerhub_id' 
        dockerImage = 'docker:18.09.7-dind'
-       DOCKER_TLS_CERTDIR: '' 
+       DOCKER_TLS_CERTDIR= '' 
+       DOCKER_HOST= 'tcp://localhost:2375'
+       DOCKER_DRIVER= overlay2'
    }
    agent {
       docker { image 'docker:18.09.7-dind' }
